@@ -4,16 +4,14 @@ const {
   getUsers,
   addUser,
   deleteUser,
-  updateUser,
   loginUser,
+  getAllUsers,
 } = require("../controller/userController");
 const { authHandler } = require("../middleware/authHandler");
 
 router.route("/").get(authHandler, getUsers).post(addUser);
-router
-  .route("/:id")
-  .put(authHandler, updateUser)
-  .delete(authHandler, deleteUser);
-router.post("/login", authHandler, loginUser);
+router.get("/all", getAllUsers);
+router.post("/login", loginUser);
+router.delete("/:id", authHandler, deleteUser);
 
 module.exports = router;

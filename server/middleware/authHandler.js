@@ -1,27 +1,32 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/usersModel");
+const asyncHandler = require("express-async-handler");
 
-const authHandler = async (req, res, next) => {
+const authHandler = asyncHandler(async (req, res, next) => {
+  let token = "";
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-      let token = req.headers.authorization.split(" ")[1];
+      token = req.headers.authorization.split(" ")[1];
 
       const verifyJwt = jwt.verify(token, process.env.JWT_SECRET);
 
-      console.log(verifyJwt);
-
       req.user = await UserModel.findById(verifyJwt.id).select("-password");
-
-      console.log(req.user);
 
       next();
     } catch (error) {
       console.log(error.message);
+      throw new Error("Not authorized");
     }
-  } 
-};
+  }
+
+  if (!token || null) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+});
 
 module.exports = { authHandler };

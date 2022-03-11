@@ -9,6 +9,6 @@ const {
 const { authHandler } = require("../middleware/authHandler");
 
 router.route("/").get(authHandler, getGoal).post(authHandler, addGoal);
-router.route("/:id").put(updateGoal).delete(deleteGoal);
+router.route("/:id").put(updateGoal).delete(authHandler, deleteGoal);
 
 module.exports = router;
